@@ -1,3 +1,3 @@
-一份简单的环视系统制作实现，包含完整的标定、投影、拼接和实时运行流程，详细文档见 `doc` 目录。
+A simple production and implementation of surround view system, including complete calibration, projection, splicing and real-time operation process, see the `doc` catalog .
 
-环视系统的开源代码很少见，希望大家积极提 issue 和 pull request，让这个项目能更好地有益于入门者学习。
+The open source code of the Surround View system is rare. I hope everyone will actively submit issues and pull requests, so that this project can be better for beginners to learn.

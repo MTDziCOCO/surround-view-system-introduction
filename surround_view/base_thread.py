@@ -1,5 +1,4 @@
 from queue import Queue
-import cv2
 from PyQt5.QtCore import (QThread, QTime, QMutex, pyqtSignal, QMutexLocker)
 
 from .structures import ThreadStatisticsData
