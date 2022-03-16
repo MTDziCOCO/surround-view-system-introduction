@@ -3,6 +3,10 @@ import numpy as np
 
 # return -1 if user press 'q'. return 1 if user press 'Enter'.
 def display_image(window_title, image):
+    # TODO: to make a isometric view
+    # tilt = 0.4
+    # homography_mat = np.array([[1, 0, tilt], [0, 1, tilt], [0, 0, 1 + tilt]], dtype=np.float32)
+    # image = cv2.warpPerspective(image, homography_mat, (1200, 1200))
     cv2.imshow(window_title, image)
     while True:
         click = cv2.getWindowProperty(window_title, cv2.WND_PROP_AUTOSIZE)

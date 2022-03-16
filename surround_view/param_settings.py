@@ -7,8 +7,8 @@ camera_names = ["front", "back", "left", "right"]
 # --------------------------------------------------------------------
 # (shift_width, shift_height): how far away the birdview looks outside
 # of the calibration pattern in horizontal and vertical directions
-shift_w = 300
-shift_h = 300
+shift_w = 300 # 500  # 300
+shift_h = 300 # 500  # 300
 
 # size of the gap between the calibration pattern and the car
 # in horizontal and vertical directions

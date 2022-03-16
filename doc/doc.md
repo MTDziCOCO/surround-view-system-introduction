@@ -1,28 +1,23 @@
 There is already a lot of information on the Internet about the panoramic view system of the vehicle, but there is almost no code for reference, which is very unfriendly to newcomers. The purpose of this project is to introduce the principle of the panorama system, and to provide a practical Python implementation with complete basic elements for your reference. The knowledge involved in the surround view panoramic system is not complicated, only the reader needs to understand the camera calibration, perspective transformation, and know how to use OpenCV.
 
-This program was originally developed on an unmanned car equipped with an AGX Xavier, and the running effect is as follows (see `"./img/smallcar.mp4"`).
+This program was originally developed on an unmanned car equipped with an AGX Xavier, and the running effect is as follows (see `img/smallcar.mp4`).
 
-The car is equipped with four USB surround-view fisheye cameras. The resolution of the images returned by the cameras is 640x480. The images are first corrected for distortion, and then converted into a bird's-eye view of the ground under projective transformation. the above effect. All processes are processed in the CPU, and the overall operation is smooth.
+The car is equipped with four USB surround-view fisheye cameras. The resolution of the images returned by the cameras is 640x480. The images are first corrected for distortion, and then converted into a bird's-eye view of the ground under projective transformation. It's all done on the CPU, and the overall operation is smooth.
 
-Later, I refactored the code and transplanted it to a passenger car (the processor is the same type of AGX), and got similar results:
+Later, I refactored the code and transplanted it to a passenger car (the processor is the same type of AGX), and got similar results (see `img/car.mp4`).
 
-This version uses four 960x640 csi cameras, and the output panorama resolution is 1200x1600. The panorama processing thread runs at about 17 fps without brightness equalization, and drops to only 7 fps after brightness equalization is added. . I think that if the resolution is appropriately reduced (for example, using a 480x640 output can reduce the number of pixels to 1/6 of the original), smooth visual effects should also be obtained.
+This version uses four 960x640 csi cameras, and the output panorama resolution is 1200x1600. The panorama processing thread runs at about 17 fps without brightness equalization, and drops to only 7 fps after brightness equalization is added. I think that if the resolution is appropriately reduced (for example, using a 480x640 output can reduce the number of pixels to 1/6 of the original), smooth visual effects should also be obtained.
 
+> Note: The black part in the picture is the blind spot after the camera is projected. This is because the front camera is installed on the left side of the front of the car in order to avoid the part of the car logo and the angle is inclined, so the field of view is limited. Imagine a person walking with a crooked neck and slanted eyes...
 
-
-
-> Note : The black part in the picture is the blind spot after the camera is projected. This is because the front camera is installed on the left side of the front of the car in order to avoid the part of the car logo and the angle is inclined, so the field of view is limited. Imagine a person walking with a crooked neck and slanted eyes...
-
-The implementation of this project is relatively rough, and it is only used as a demonstration project to show the basic elements of generating a look-around panorama, and everyone can understand the spirit. I developed this project to display the vehicle's trajectory in real-time during automatic parking, and also as an internship project for the intern I mentored. Since there is no previous experience and reference, most of the algorithms and processes are written in thought, not necessarily clever, please give more advice. The code is written in Python, which is definitely not as efficient as C++, so it is only suitable for learning and verifying ideas.
+The implementation of this project is relatively rough, and it is only used as a demonstration project to show the basic elements of generating a look-around panorama, and everyone can understand the spirit. I developed this project to display the vehicle's trajectory in real-time during automatic parking, and also as an internship project for the intern I mentored. Since there is no previous experience and reference, most of the algorithms and processes are written in thought, not necessarily clever, please keep that in mind. The code is written in Python, which is definitely not as efficient as C++, so it is only suitable for learning and verifying ideas.
 
 The following will introduce my implementation steps one by one.
 
 
 # Hardware and software configuration
 
-
-
-I would like to emphasize first that the hardware configuration is the least bothersome thing in this project, the hardware used in the first trolley project is as follows:
+I would like to emphasize first that the hardware configuration is the least bothersome thing in this project, the hardware used in the first smallcar project is as follows:
 
 1. Four USB fisheye cameras, the supported resolutions are 640x480|800x600|1920x1080. Because I need to run it in real time under Python, the resolution set for efficiency is 640x480.
 2. An AGX Xavier. In fact, it runs as fast as running on a normal notebook.
@@ -99,7 +94,7 @@ Then we need to set several parameters: (all parameters below are in centimeters
 
 Note that the extended lines on the four sides of this vehicle area divide the entire bird's eye view into front left (FL), front center (F), front right (FR), left (L), right (R), rear left (BL), rear center (B), rear right (BR) eight parts, of which FL (area I), FR (area II), BL (area III), BR (area IV) are the overlapping areas of adjacent camera fields of view, which are also our key needs. The part that performs fusion processing. The four areas F, R, L, and R belong to the separate field of view of each camera, and do not need to be fused.
 
-The above parameters are stored in [param_settings.py](https://github.com/neozhaoliang/surround-view-system-introduction/blob/master/surround_view/param_settings.py) 。
+The above parameters are stored in [param_settings.py](https://github.com/neozhaoliang/surround-view-system-introduction/blob/master/surround_view/param_settings.py).
 
 After setting the parameters, the projection area of ​​each camera is determined. For example, the projection area corresponding to the front camera is as follows:
 
